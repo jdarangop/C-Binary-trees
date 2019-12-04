@@ -60,7 +60,6 @@ int binary_tree_balance(const binary_tree_t *tree)
 
 
 
-
 /**
  * binary_tree_is_perfect - Returns if the tree is perfect
  * @tree: is the node from which to get the node
@@ -69,9 +68,15 @@ int binary_tree_balance(const binary_tree_t *tree)
  */
 int binary_tree_is_perfect(const binary_tree_t *tree)
 {
+	int isperfect_left = 1, isperfect_right = 1;
+
 	if (tree == NULL)
 		return (0);
+	if (tree->left)
+		isperfect_left = binary_tree_is_perfect(tree->left);
+	if (tree->right)
+		isperfect_right = binary_tree_is_perfect(tree->right);
 	if (binary_tree_is_full(tree) && !binary_tree_balance(tree))
-		return (1);
+		return (isperfect_left * isperfect_right);
 	return (0);
 }
