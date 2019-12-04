@@ -3,8 +3,8 @@
 /**
  * binary_tree_node - Insert a new node in the tree.
  *
- * @parent: Parent node.
- * @value: Value of the node.
+ * @tree: Root of the tree.
+ * @func: function to excecute.
  *
  * Return: Always 0 (Success)
  */

@@ -1,9 +1,9 @@
 #include "binary_trees.h"
 
 /**
- * binary_tree_sibling - returns a pinter to the sibling of a node.
- *
- * @tree: node.
+ * binary_trees_ancestor - returns a pinter to the sibling of a node.
+ * @first: First.
+ * @second: Second.
  * Return: pointer to the sibling node
  */
 

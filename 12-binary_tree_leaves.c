@@ -1,10 +1,9 @@
 #include "binary_trees.h"
 
 /**
- * binary_tree_node - Insert a new node in the tree.
+ * binary_tree_leaves - Find the amount of leaves in the tree.
  *
- * @parent: Parent node.
- * @value: Value of the node.
+ * @tree: Root of the tree.
  *
  * Return: Always 0 (Success)
  */

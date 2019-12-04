@@ -2,6 +2,7 @@
 
 /**
  * binary_tree_delete - Entry point
+ * @tree: Tree root.
  *
  * Return: Always 0 (Success)
  */

@@ -2,8 +2,12 @@
 
 /**
  * binary_tree_insert_left - function that inserts a node to the left
-child of a tree
+ * child of a tree
  *
+ * @parent: Parent node.
+ * @value:  value.
+ *
+ * Return: The node inserted.
  *
  */
 binary_tree_t *binary_tree_insert_left(binary_tree_t *parent, int value)
