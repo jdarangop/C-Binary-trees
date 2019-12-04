@@ -19,7 +19,7 @@ size_t height_recursion(const binary_tree_t *tree)
 }
 
 /**
- * binary_tree_height - returns the height of a tree
+ * binary_tree_balance - returns the height of a tree
  * @tree: is the node from which to get the node
  * Return: an integer with the height or 0 if node is null
  */

@@ -1,7 +1,7 @@
 #include "binary_trees.h"
 
 /**
- * binary_tree_node - Insert a new node in the tree.
+ * binary_tree_preorder - Insert a new node in the tree.
  *
  * @tree: Root of the tree.
  * @func: function to excecute.
@@ -18,7 +18,7 @@ void binary_tree_preorder(const binary_tree_t *tree, void (*func)(int))
 
 	tmp = tree;
 	if (tmp)
-	{	
+	{
 		func(tmp->n);
 		if (tmp->left)
 			binary_tree_preorder(tmp->left, func);

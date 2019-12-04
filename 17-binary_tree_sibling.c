@@ -3,7 +3,7 @@
 /**
  * binary_tree_sibling - returns a pinter to the sibling of a node.
  *
- * @tree: node.
+ * @node: node.
  * Return: pointer to the sibling node
  */
 binary_tree_t *binary_tree_sibling(binary_tree_t *node)
