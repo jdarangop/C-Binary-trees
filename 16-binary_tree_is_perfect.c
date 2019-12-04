@@ -19,43 +19,59 @@ int binary_tree_is_full(const binary_tree_t *tree)
 	return (1);
 }
 
+/**
+ * height_recursion - function that calculates the height using recursion
+ *
+ * @tree: node to find recursion
+ * Return: the number of height nodes
+ */
+
+size_t height_recursion(const binary_tree_t *tree)
+{
+	size_t left_count = 0, right_count = 0;
+
+	if (tree->left)
+		left_count = height_recursion(tree->left);
+	if (tree->right)
+		right_count = height_recursion(tree->right);
+	return ((left_count > right_count) ? left_count + 1 : right_count + 1);
+}
 
 /**
- * binary_tree_inorder - Entry point
+ * binary_tree_balance - returns the balance of a tree
+ * @tree: is the node from which to get the node
+ * Return: an integer with the height or 0 if node is null
+ */
+int binary_tree_balance(const binary_tree_t *tree)
+{
+	int left = 0, right = 0;
+
+	if (tree)
+	{
+		if (tree->left)
+			left = height_recursion(tree->left);
+		if (tree->right)
+			right = height_recursion(tree->right);
+		return (left - right);
+	}
+	else
+		return (0);
+}
+
+
+
+
+/**
+ * binary_tree_is_perfect - Returns if the tree is perfect
+ * @tree: is the node from which to get the node
  *
- * Return: Always 0 (Success)
+ * Return: 1 if is perfect, 0 if doesn't
  */
 int binary_tree_is_perfect(const binary_tree_t *tree)
 {
-	const binary_tree_t *tmp;
-	int isfull;
-
 	if (tree == NULL)
 		return (0);
-	tmp = tree;
-	if (tmp)
-	{
-		if (tmp->left)
-			binary_tree_is_perfect(temp->left);
-		isfull = binary_tree_is_full(
-		if (temp->right)
-			binary_tree_is_perfect(temp->right);
-
-}
-void binary_tree_inorder(const binary_tree_t *tree, void (*func)(int))
-{
-	const binary_tree_t *temp;
-
-	if (tree == NULL || func == NULL)
-		return;
-	temp = tree;
-
-	if (temp)
-	{
-		if (temp->left)
-			binary_tree_inorder(temp->left, func);
-		func(temp->n);
-		if (temp->right)
-			binary_tree_inorder(temp->right, func);
-	}
+	if (binary_tree_is_full(tree) && !binary_tree_balance(tree))
+		return (1);
+	return (0);
 }
