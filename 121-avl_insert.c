@@ -1,76 +1,57 @@
 #include "binary_trees.h"
-
 /**
  * rotation_right - rotates to the right using previous function
- * @last: pointer to the parent of the node to be rotated
- * @flag: direction of the child, 1 is right
+ * @last: pointer to the node to be rotated
+ * @tree: pointer to the root
  * Return: pointer to the root of the new subtree
  */
-avl_t *rotation_right(avl_t *last, int flag)
+avl_t *rotation_right(avl_t **tree, avl_t *last)
 {
-	avl_t *current;
+	avl_t *n_parent;
 
-	if (flag)
+	if (!last->parent)
 	{
-		current = last->right;
-		current->parent = NULL;
-		current = binary_tree_rotate_right(current);
-		current->parent = last;
-		last->right = current;
-		current->right->parent = current;
+		*tree = binary_tree_rotate_right(last);
+		return (*tree);
 	}
+
+	n_parent = last->parent;
+	last->parent = NULL;
+	last = binary_tree_rotate_right(last);
+	last->parent = n_parent;
+	if (last->n < n_parent->n)
+		n_parent->left = last;
 	else
-	{
-		current = last->left;
-		current->parent = NULL;
-		current = binary_tree_rotate_right(current);
-		current->parent = last;
-		last->left = current;
-		current->right->parent = current;
-	}
+		n_parent->right = last;
 
-	return (current);
+	return (last);
 }
 /**
  * rotation_left - rotates to the left using previous function
- * @last: pointer to the parent of the node to be rotated
- * @flag: direction of the child, 1 is right
+ * @last: pointer to the node to be rotated
+ * @tree: root of the tree
  * Return: pointer to the root of the new subtree
  */
-avl_t *rotation_left(avl_t *last, int flag)
+avl_t *rotation_left(avl_t **tree, avl_t *last)
 {
-	avl_t *current;
+	avl_t *n_parent;
 
-	if (!flag)
+	if (!last->parent)
 	{
-		current = last->left;
-		current->parent = NULL;
-		current = binary_tree_rotate_left(current);
-		current->parent = last;
-		last->left = current;
-		current->left->parent = current;
+		*tree = binary_tree_rotate_left(last);
+		return (*tree);
 	}
+
+	n_parent = last->parent;
+	last->parent = NULL;
+	last = binary_tree_rotate_left(last);
+	last->parent = n_parent;
+	if (last->n < n_parent->n)
+		n_parent->left = last;
 	else
-	{
-		current = last->right;
-		current->parent = NULL;
-		current = binary_tree_rotate_left(current);
-		current->parent = last;
-		last->right = current;
-		current->left->parent = current;
-	}
-	return (current);
-}
-/**
- * new_root - returns a new root node
- * @tree: double pointer to the tree
- * @value: value to create the node
- * Return: pointer to the new node
- */
-avl_t *new_root(avl_t **tree, int value)
-{
-	*tree = binary_tree_node(*tree, value);
-	return (*tree);
+		n_parent->right = last;
+
+	return (last);
 }
 /**
  * balance_check - check the balance and calls rotation if necessary
@@ -81,41 +62,42 @@ avl_t *new_root(avl_t **tree, int value)
  */
 void balance_check(avl_t **tree, avl_t *last)
 {
-	while (last)
+	while (last && last->parent)
 	{
-		if (binary_tree_balance(last) == 2)
+		if (binary_tree_balance(last) == 1 &&
+		binary_tree_balance(last->parent) == 2)
+			rotation_right(tree, last->parent);
+		else if (binary_tree_balance(last) == -1 &&
+		binary_tree_balance(last->parent) == -2)
+			rotation_left(tree, last->parent);
+		else if (binary_tree_balance(last) == -1 &&
+		binary_tree_balance(last->parent) == 2)
 		{
-			if (last->left->right)
-				rotation_left(last, 0);
-			if (last->parent)
-			{
-				if (last->parent->right == last)
-					rotation_right(last->parent, 1);
-				else
-					rotation_right(last->parent, 0);
-			}
-			else
-				*tree = binary_tree_rotate_right(last);
+			rotation_right(tree, last);
+			rotation_left(tree, last->parent);
 		}
-		else if (binary_tree_balance(last) == -2)
+		else if (binary_tree_balance(last) == 1 &&
+		binary_tree_balance(last->parent) == -2)
 		{
-			if (last->right->left)
-				rotation_right(last, 1);
-			if (last->parent)
-			{
-				if (last->parent->right == last)
-					rotation_left(last->parent, 1);
-				else
-					rotation_left(last->parent, 0);
-			}
-			else
-				*tree = binary_tree_rotate_left(last);
+			rotation_left(tree, last);
+			rotation_right(tree, last->parent);
 		}
 		else
 			last = last->parent;
 	}
-}
 
+}
+/**
+ * new_root - returns a new root node
+ * @tree: double pointer to the tree
+ * @value: value to create the node
+ * Return: pointer to the new node
+ */
+avl_t *new_root(avl_t **tree, int value)
+{
+	*tree = binary_tree_node(NULL, value);
+	return (*tree);
+}
 /**
  * avl_insert - inserts a node inside a AVL BST mantaining the structure
  *
