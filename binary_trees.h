@@ -69,4 +69,5 @@ avl_t *avl_insert(avl_t **tree, int value);
 bst_t *bst_insert(bst_t **tree, int value);
 bst_t *array_to_bst(int *array, size_t size);
 bst_t *bst_search(const bst_t *tree, int value);
+avl_t *array_to_avl(int *array, size_t size);
 #endif
