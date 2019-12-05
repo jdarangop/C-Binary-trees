@@ -45,7 +45,6 @@ avl_t *rotation_left(avl_t **tree, avl_t *last)
 	n_parent = last->parent;
 	last->parent = NULL;
 	last = binary_tree_rotate_left(last);
-	binary_tree_print(last);
 	last->parent = n_parent;
 	if (last->n < n_parent->n)
 		n_parent->left = last;
