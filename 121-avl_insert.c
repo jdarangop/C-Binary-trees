@@ -45,6 +45,7 @@ avl_t *rotation_left(avl_t **tree, avl_t *last)
 	n_parent = last->parent;
 	last->parent = NULL;
 	last = binary_tree_rotate_left(last);
+	binary_tree_print(last);
 	last->parent = n_parent;
 	if (last->n < n_parent->n)
 		n_parent->left = last;
@@ -66,21 +67,29 @@ void balance_check(avl_t **tree, avl_t *last)
 	{
 		if (binary_tree_balance(last) == 1 &&
 		binary_tree_balance(last->parent) == 2)
+		{
 			rotation_right(tree, last->parent);
+			break;
+		}
 		else if (binary_tree_balance(last) == -1 &&
 		binary_tree_balance(last->parent) == -2)
+		{
 			rotation_left(tree, last->parent);
+			break;
+		}
 		else if (binary_tree_balance(last) == -1 &&
 		binary_tree_balance(last->parent) == 2)
 		{
-			rotation_right(tree, last);
-			rotation_left(tree, last->parent);
+			last = rotation_left(tree, last);
+			rotation_right(tree, last->parent);
+			break;
 		}
 		else if (binary_tree_balance(last) == 1 &&
 		binary_tree_balance(last->parent) == -2)
 		{
-			rotation_left(tree, last);
-			rotation_right(tree, last->parent);
+			last = rotation_right(tree, last);
+			rotation_left(tree, last->parent);
+			break;
 		}
 		else
 			last = last->parent;
