@@ -64,4 +64,5 @@ binary_tree_t *binary_tree_rotate_left(binary_tree_t *tree);
 binary_tree_t *binary_tree_rotate_right(binary_tree_t *tree);
 int binary_tree_is_bst(const binary_tree_t *tree);
 int binary_tree_is_avl(const binary_tree_t *tree);
+int binary_tree_is_heap(const binary_tree_t *tree);
 #endif
