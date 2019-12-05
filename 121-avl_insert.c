@@ -37,6 +37,17 @@ avl_t *rotation_left(avl_t *last)
 	return (current);
 }
 /**
+ * new_root - returns a new root node
+ * @tree: double pointer to the tree
+ * @value: value to create the node
+ * Return: pointer to the new node
+ */
+avl_t *new_root(avl_t **tree, int value)
+{
+	*tree = binary_tree_node(*tree, value);
+	return (*tree);
+}
+/**
  * avl_insert - inserts a node inside a AVL BST mantaining the structure
  *
  * @tree: double pointer to the root of the tree
@@ -45,25 +56,22 @@ avl_t *rotation_left(avl_t *last)
  */
 avl_t *avl_insert(avl_t **tree, int value)
 {
-	avl_t *last, *new_node;
+	avl_t *last, *new_node, *current;
 
 	if (!tree)
 		return (NULL);
 	if (!*tree)
+		return (new_root(tree, value));
+	current = *tree;
+	while (current)
 	{
-		*tree = binary_tree_node(*tree, value);
-		return (*tree);
-	}
-	last = *tree;
-	while (last)
-	{
-		if (last->n < value && last->right)
-			last = last->right;
-		else if (last->n > value && last->left)
-			last = last->left;
-		else if (last->n == value)
+		last = current;
+		if (current->n < value)
+			current = current->right;
+		else if (current->n > value)
+			current = current->left;
+		else if (current->n == value)
 			return (NULL);
-		break;
 	}
 	if (value > last->n)
 		last->right = binary_tree_node(last, value), new_node = last->right;
