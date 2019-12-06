@@ -51,40 +51,38 @@ avl_t *rotation(avl_t **tree, avl_t *last, int flag_right)
  *
  * @last: pointer to the current node
  * @tree: double pointer to the root node
+ * @flag: flag for exiting the balance check
  * Return: void
  */
-void balance_check_avl(avl_t **tree, avl_t *last)
+void balance_check_avl(avl_t **tree, avl_t *last, avl_t *flag)
 {
 	while (last && last->parent)
 	{
-		if ((binary_tree_balance(last) == 1 ||
-		binary_tree_balance(last) == 0) &&
-		binary_tree_balance(last->parent) == 2)
+		if (binary_tree_balance(last) == 0 && (binary_tree_balance(last->parent)
+		== -2 || binary_tree_balance(last->parent) == 2))
 		{
-			rotation(tree, last->parent, 1);
-			break;
+			if (last->parent->left && last->parent->left != last)
+				last = last->parent->left;
+			else if (last->parent->right)
+				last = last->parent->right;
+			else if (binary_tree_balance(last->parent) == 2)
+				flag = rotation(tree, last->parent, 1);
+			else
+				flag = rotation(tree, last->parent, 0);
 		}
-		else if ((binary_tree_balance(last) == -1 ||
-		binary_tree_balance(last) == 0) &&
+		if (flag)
+			break;
+		if (binary_tree_balance(last) == 1 && binary_tree_balance(last->parent) == 2)
+			flag = rotation(tree, last->parent, 1);
+		else if (binary_tree_balance(last) == -1 &&
 		binary_tree_balance(last->parent) == -2)
-		{
-			rotation(tree, last->parent, 0);
-			break;
-		}
+			flag = rotation(tree, last->parent, 0);
 		else if (binary_tree_balance(last) == -1 &&
 		binary_tree_balance(last->parent) == 2)
-		{
-			last = rotation(tree, last, 0);
-			rotation(tree, last->parent, 1);
-			break;
-		}
+			last = rotation(tree, last, 0), flag = rotation(tree, last->parent, 1);
 		else if (binary_tree_balance(last) == 1 &&
 		binary_tree_balance(last->parent) == -2)
-		{
-			last = rotation(tree, last, 1);
-			rotation(tree, last->parent, 0);
-			break;
-		}
+			last = rotation(tree, last, 1), flag = rotation(tree, last->parent, 0);
 		else if (binary_tree_balance(last) < 2 && binary_tree_balance(last) > -2)
 			last = last->parent;
 		else
@@ -94,6 +92,8 @@ void balance_check_avl(avl_t **tree, avl_t *last)
 			else
 				last = last->right;
 		}
+		if (flag)
+			break;
 	}
 }
 
@@ -138,7 +138,7 @@ int value)
 			(*temp)->parent->right = NULL;
 		else
 			(*temp)->parent->left = NULL;
-		balance_check_avl(&root, (*temp)->parent);
+		balance_check_avl(&root, (*temp)->parent, NULL);
 		free(*temp);
 		return (NULL);
 	}
@@ -182,7 +182,7 @@ void successor_new_childs(bst_t *successor, bst_t *temp)
 
 avl_t *avl_remove(avl_t *root, int value)
 {
-	avl_t *successor = NULL, *temp = NULL;
+	avl_t *successor = NULL, *temp = NULL, *flag = NULL;
 
 	if (!in_order_successor(root, &temp, &successor, value))
 		return (root);
@@ -201,6 +201,6 @@ avl_t *avl_remove(avl_t *root, int value)
 	if (!successor->parent)
 		root = successor;
 	successor_new_childs(successor, temp), free(temp);
-	balance_check_avl(&root, successor);
+	balance_check_avl(&root, successor, flag);
 	return (root);
 }
