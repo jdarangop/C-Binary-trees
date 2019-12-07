@@ -1,6 +1,6 @@
 #include "binary_trees.h"
 /**
- * array_to_bst - Turns an array to a tree.
+ * array_to_heap - Turns an array to a tree.
  *
  * @array: Array to be transformed.
  * @size: Size of the array.
