@@ -1,6 +1,29 @@
 #include "binary_trees.h"
 
 /**
+ * binary_tree_node - Insert a new node in the tree.
+ *
+ * @parent: Parent node.
+ * @value: Value of the node.
+ *
+ * Return: Always 0 (Success)
+ */
+
+binary_tree_t *binary_tree_node(binary_tree_t *parent, int value)
+{
+	binary_tree_t *new_node;
+
+	new_node = malloc(sizeof(binary_tree_t));
+	if (new_node == NULL)
+		return (NULL);
+	new_node->n = value;
+	new_node->left = NULL;
+	new_node->right = NULL;
+	new_node->parent = parent;
+	return (new_node);
+}
+
+/**
  * check_new_root - checks the new root
  * @root: root
  * @new_root: new root
@@ -8,67 +31,47 @@
  */
 heap_t *check_new_root(heap_t **root, heap_t *new_root)
 {
-	heap_t *head;
+	heap_t *head, *current;
 
-	head = *root;
-	if (new_root == head)
+	current = *root;
+	while (1)
 	{
-		free(new_root);
-		return (NULL);
+		if (binary_tree_balance(current))
+			current = current->left;
+		else if (!binary_tree_balance(current) && current->right)
+			current = current->right;
+		else if (!binary_tree_balance(current))
+			break;
 	}
+	new_root = current, head = *root;
+	if (new_root == head)
+		free(head), new_root = NULL;
 	else if (new_root->parent == head)
 	{
 		if (head->right == new_root)
 		{
-			new_root->left = head->left;
-			head->left->parent = new_root;
-			*root = new_root;
-			free(head);
+			new_root->left = head->left, head->left->parent = new_root;
+			*root = new_root, free(head);
 		}
 		else
 		{
-			*root = new_root;
-			free(head);
+			*root = new_root, free(head);
 			new_root->parent = NULL;
 			return (NULL);
 		}
 	}
 	else
 	{
-		new_root->left = head->left;
-		new_root->left->parent = new_root;
-		new_root->right = head->right;
-		new_root->right->parent = new_root;
+		new_root->left = head->left, new_root->left->parent = new_root;
+		new_root->right = head->right, new_root->right->parent = new_root;
 		if (new_root->parent->right == new_root)
 			new_root->parent->right = NULL;
 		else
 			new_root->parent->left = NULL;
-		*root = new_root;
-		free(head);
+		*root = new_root, free(head);
 	}
 	return (new_root);
 }
-
-/**
- * last_level_node - gets the new root
- * @root: root
- *
- * Return: node
- */
-heap_t *last_level_node(heap_t *root)
-{
-	while (1)
-	{
-		if (binary_tree_balance(root))
-			root = root->left;
-		else if (!binary_tree_balance(root) && root->right)
-			root = root->right;
-		else if (!binary_tree_balance(root))
-			break;
-	}
-	return (root);
-}
-
 /**
  * if_check - if statement
  * @new_root: new root
@@ -154,16 +157,15 @@ void loop_heap(heap_t **root, heap_t *new_root)
  */
 int heap_extract(heap_t **root)
 {
-	heap_t *tmp, *new_root;
+	heap_t *new_root = NULL;
 	int value;
 
 	if (!*root)
 		return (0);
 
 	value = (*root)->n;
-	new_root = last_level_node(*root);
-	tmp = check_new_root(root, new_root);
-	if (!tmp)
+	new_root = check_new_root(root, new_root);
+	if (!new_root)
 		return (value);
 	new_root->parent = NULL;
 
