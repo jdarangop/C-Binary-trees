@@ -60,7 +60,6 @@ int binary_tree_is_full(const binary_tree_t *tree)
 
 
 /**
-
  * binary_tree_is_perfect - Returns if the tree is perfect
  * @tree: is the node from which to get the node
  *
@@ -80,72 +79,101 @@ int binary_tree_is_perfect(const binary_tree_t *tree)
 		return (isperfect_left * isperfect_right);
 	return (0);
 }
-
+/**
+ * recursion_heap - performs the recursion for adding new nodes
+ *
+ * @node: root
+ * @value: value of the new node
+ * Return: pointer to the new node
+ */
 heap_t *recursion_heap(heap_t **node, int value)
 {
 	heap_t *new_node_r = NULL, *new_node_l = NULL, *tmp;
 
+	if (*node == NULL)
+	{
+		*node = binary_tree_node(*node, value);
+		return (*node);
+	}
 	tmp = *node;
-	puts("recursion");
-	if (tmp->left)
-		new_node_l = recursion_heap(&(tmp->left), value);
-	if (tmp->right)
-		new_node_r = recursion_heap(&(tmp->right), value);
-	if (!(tmp->parent))
+	if (binary_tree_is_perfect(tmp) && !(tmp->parent))
 	{
+		while (tmp->left)
+			tmp = tmp->left;
 		tmp->left = binary_tree_node(tmp, value);
 		return (tmp->left);
 	}
-	else if (binary_tree_balance(tmp) == 0 && binary_tree_balance(tmp->parent) == 1)
-	{
-		tmp->parent->right = binary_tree_node(tmp->parent, value);
-		return (tmp->parent->right);
-	}
-	else if (binary_tree_balance(tmp) == 0 && binary_tree_balance(tmp->parent) == -1)
-	{
-		tmp->left = binary_tree_node(tmp, value);
-		return (tmp->left);
-	}
-	else if (binary_tree_balance(tmp) == 1 && binary_tree_balance(tmp->parent) == 0)
+	else if (tmp->left && !tmp->right)
 	{
 		tmp->right = binary_tree_node(tmp, value);
 		return (tmp->right);
 	}
+	else if (tmp->left && tmp->right && binary_tree_balance(tmp) == 1
+	&& binary_tree_is_perfect(tmp->left))
+	{
+		tmp = tmp->right;
+		while (tmp->left)
+			tmp = tmp->left;
+		tmp->left = binary_tree_node(tmp, value);
+		return (tmp->left);
+	}
+	if (tmp->left)
+		new_node_l = recursion_heap(&(tmp->left), value);
+	if (tmp->right && !new_node_l)
+		new_node_r = recursion_heap(&(tmp->right), value);
 	if (new_node_l)
 		return (new_node_l);
-	else
+	else if (new_node_r)
 		return (new_node_r);
 	return (NULL);
 }
 
 /**
- * bst_search - Search a value in a binary tree.
+ * heap_insert - inserts a value in a binary heap.
  *
- * @tree: root of a subtree.
- * @value: value to search.
- * Return: The node of value found or null.
+ * @root: root of a tree.
+ * @value: value to insert.
+ * Return: The new node or null.
  */
 
 heap_t *heap_insert(heap_t **root, int value)
 {
-	heap_t *tmp;
+	heap_t *tmp, *new_node, *current;
 
-	if (*root == NULL)
+	new_node = recursion_heap(root, value);
+	while (new_node && new_node->parent && new_node->n > new_node->parent->n)
 	{
-		printf("Entro");
-		*root = binary_tree_node(*root, value);
-		return (*root);
-	}
-	tmp = *root;
-	if (binary_tree_is_perfect(tmp))
-	{
-		while (tmp->left)
+		tmp = new_node->parent;
+		if (tmp->right == new_node)
 		{
-			tmp = tmp->left;
+			current = new_node->left, new_node->left = tmp->left;
+			if (new_node->left)
+				new_node->left->parent = new_node;
+			tmp->left = current;
+			if (tmp->left)
+				tmp->left->parent = tmp;
+			current = new_node->right, new_node->right = tmp;
+			tmp->right = current;
 		}
-		tmp->left = binary_tree_node(tmp, value);
-		return (tmp->left);
+		else
+		{
+			current = new_node->right, new_node->right = tmp->right;
+			if (new_node->right)
+				new_node->right->parent = new_node;
+			tmp->right = current;
+			if (tmp->right)
+				tmp->right->parent = tmp;
+			current = new_node->left, new_node->left = tmp;
+			tmp->left = current;
+		}
+		new_node->parent = tmp->parent;
+		if (tmp->parent && tmp->parent->right == tmp)
+			tmp->parent->right = new_node;
+		else if (tmp->parent)
+			tmp->parent->left = new_node;
+		tmp->parent = new_node;
 	}
-	else
-		return (recursion_heap(&tmp, value));
+	if (new_node && !new_node->parent)
+		*root = new_node;
+	return (new_node);
 }
