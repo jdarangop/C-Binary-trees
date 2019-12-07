@@ -166,6 +166,8 @@ heap_t *heap_insert(heap_t **root, int value)
 			current = new_node->left, new_node->left = tmp;
 			tmp->left = current;
 		}
+		if (current)
+			current->parent = tmp;
 		new_node->parent = tmp->parent;
 		if (tmp->parent && tmp->parent->right == tmp)
 			tmp->parent->right = new_node;
